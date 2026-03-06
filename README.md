@@ -1,4 +1,4 @@
-# Spelling Trainer (macOS SwiftUI)
+# Spelling Trainer
 
 A lightweight macOS vocabulary training tool designed for **academic reading workflows**. It allows you to quickly import unfamiliar words (especially from Zotero PDF highlights) and practice spelling using a QWERTY‑Learner–style typing interface.
 
