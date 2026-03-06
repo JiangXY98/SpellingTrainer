@@ -1,16 +1,26 @@
-![image-20260306113751870](./assets/image-20260306113751870.png)
+# Spelling Trainer ![GitHub release](https://img.shields.io/github/v/release/JiangXY98/SpellingTrainer)
 
-# Spelling Trainer
+![image-20260306113751870](./assets/image-20260306113751870.png)
 
 A lightweight macOS vocabulary training tool designed for **academic reading workflows**. It allows you to quickly import unfamiliar words (especially from Zotero PDF highlights) and practice spelling using a QWERTY‑Learner–style typing interface.
 
 This project is intentionally implemented as a **single‑file SwiftUI MVP**, making it easy to understand, modify, and extend.
 
-[中文](./doc/中文.md)
+[中文](./doc/中文介绍.md)
+
+## Key features
+
+- **Fast word import from Zotero highlights** — paste copied PDF highlights and automatically extract words and meanings.
+- **Typing‑based spelling practice** — practice vocabulary using a QWERTY‑Learner–style typing interface.
+- **Two practice modes** — strict spelling mode and copy‑typing mode for different learning stages.
+- **Session‑based training** — automatically mixes new words and review words for each practice session.
+- **Lightweight local vocabulary database** — all data stored locally in a simple JSON file.
+- **Searchable vocabulary list** — quickly locate words and review meanings and practice history.
+- **macOS native SwiftUI interface** — fast, minimal, and fully integrated with the macOS UI style.
 
 ## Recommended Workflow
 
-Typical usage with Zotero:
+Typical usage with Zotero Translation:
 
 ```
 1. Highlight word in Zotero PDF
@@ -19,354 +29,36 @@ Typical usage with Zotero:
 4. Click "Start Practice"
 ```
 
----
+## Installation
 
-# Core Features
+You can download the pre‑built application from the GitHub **Releases** page:
 
-## Vocabulary Management
+https://github.com/JiangXY98/SpellingTrainer/releases
 
-The left sidebar maintains your vocabulary list.
+Steps:
 
-Capabilities:
-
-• Add words manually (`+` button)
-• Delete words via right‑click
-• Search vocabulary
-• View detailed popup information
-
-Each vocabulary item stores:
+1. Open the repository's **Releases** page.
+2. Download the latest file named similar to:
 
 ```
-word
-meaning
-source
-sourceURL
-attemptCount
-correctCount
-wrongCount
-intervalDays
-difficulty
-nextReviewAt
-createdAt
-lastTrainedAt
+SpellingTrainer.app.zip
 ```
 
-Vocabulary data is stored locally as JSON.
-
----
-
-# Importing Words
-
-## 1. Zotero Quick Import
-
-Click **Paste Zotero** to parse text copied from Zotero PDF highlights.
-
-Supported patterns:
-
-### Pattern A
+3. Unzip the archive to obtain:
 
 ```
-“satisfactory” (...) "satisfactory 英 ... adj. 令人满意的"
+SpellingTrainer.app
 ```
 
-Result:
+4. Move the application to the **Applications** folder.
+
+5. Because the app is not signed with an Apple Developer certificate, macOS may block it on first launch. Run the following command in Terminal:
 
 ```
-word: satisfactory
-meaning: adj. 令人满意的
+sudo xattr -r -d com.apple.quarantine /Applications/SpellingTrainer.app
 ```
 
-### Pattern B
-
-```
-“Choice optimality” (...) 🔤选择最优性🔤
-```
-
-Result:
-
-```
-word: Choice optimality
-meaning: 选择最优性
-```
-
-Duplicate word handling depends on:
-
-```
-Merge meaning on import/upsert
-```
-
-Enabled → append meaning
-
-Disabled → overwrite meaning
-
----
-
-## 2. CSV Import
-
-You can also import from CSV.
-
-Example format:
-
-```
-word,meaning
-salience,显著性
-abstinence,戒断
-```
-
-Supported headers:
-
-```
-word
-meaning
-definition
-trans
-```
-
----
-
-# Practice Modes
-
-## Strict Mode (default)
-
-Displays the meaning and requires you to **type the exact word**.
-
-Behavior:
-
-• Press Return to submit
-• Incorrect answers require immediate retyping
-• Wrong words are reinserted into the queue after a delay
-
----
-
-## Copy Mode
-
-Designed for learning new words or improving typing speed.
-
-Features:
-
-• Ghost text overlay
-• Real‑time prefix matching
-• Error underline
-
-Visual feedback:
-
-```
-correct prefix → darker
-first error → red underline
-remaining text → light
-```
-
-Submission still requires pressing Return.
-
----
-
-# Session Scheduling
-
-Session size is controlled by **Settings**.
-
-Parameters:
-
-```
-maxNewPerSession
-maxReviewPerSession
-```
-
-Definitions:
-
-```
-New word    = attemptCount == 0
-Review word = attemptCount > 0
-```
-
-Session queue logic:
-
-```
-queue = newBatch + reviewBatch
-```
-
-Where:
-
-```
-newBatch    = min(dueNew, maxNewPerSession)
-reviewBatch = min(dueReview, maxReviewPerSession)
-```
-
-If no words are due:
-
-```
-random sample = maxReviewPerSession
-```
-
-Incorrect words reappear after:
-
-```
-recycleDelay = 4
-```
-
----
-
-# Session Controls
-
-Main page buttons:
-
-```
-Start Practice
-Stop
-```
-
-Stop behavior:
-
-• Ends current session
-• Preserves session statistics
-• Shows session summary
-• Returns to start screen
-
-Session summary includes:
-
-```
-Attempts
-Accuracy
-WPM
-Streak
-```
-
----
-
-# Statistics
-
-Top status bar shows:
-
-```
-Accuracy
-WPM
-Streak
-```
-
-Per‑word statistics:
-
-```
-correctCount
-wrongCount
-lastTrainedAt
-```
-
----
-
-# Data Storage
-
-Vocabulary file:
-
-```
-~/Library/Application Support/SpellingTrainer/vocab.json
-```
-
----
-
-# Automatic Backups
-
-Every save creates a backup copy:
-
-```
-~/Library/Application Support/SpellingTrainer/Backups/
-```
-
-Backup naming:
-
-```
-vocab_YYYYMMDD_HHMMSS.json
-```
-
-Retention policy:
-
-```
-20 most recent backups
-```
-
-Older backups are automatically removed.
-
----
-
-# iCloud Sync (Optional)
-
-You can enable **iCloud Sync** in the sidebar.
-
-When enabled:
-
-```
-vocab.json
-```
-
-is stored in:
-
-```
-iCloud Drive
-Documents/SpellingTrainer/
-```
-
-Now iCloud is unavailable, the app automatically falls back to local storage.
-
----
-
-# Export
-
-Two export formats are available.
-
-## Export CSV
-
-Contains:
-
-```
-word
-meaning
-source
-sourceURL
-attemptCount
-correctCount
-wrongCount
-intervalDays
-difficulty
-nextReviewAt
-createdAt
-lastTrainedAt
-```
-
----
-
-## Export JSON
-
-Exports the complete vocabulary structure.
-
-Recommended for:
-
-• full backups
-• migrations
-• data analysis
-
----
-
-# Settings
-
-Open:
-
-```
-Spelling Trainer → Settings
-```
-
-Adjust:
-
-```
-Max new per session
-Max reviews per session
-```
-
-Default values:
-
-```
-10 new
-30 review
-```
-
----
+After this step, the application can be launched normally.
 
 # Building the App
 
@@ -411,9 +103,17 @@ You can move it to:
 /Applications
 ```
 
+[维护指南](./doc/维护指南.md)
+
 ---
 
-# Current Design Philosophy
+# Author
+
+**Xiaoyu Jiang**  
+
+PhD Researcher – Consumer Behavior & Neuro‑Decision Science
+
+This tool was originally developed to support vocabulary acquisition during intensive academic reading (especially Zotero‑based literature workflows).
 
 This project intentionally prioritizes:
 
@@ -427,19 +127,9 @@ Instead of using CoreData or complex architectures, everything is implemented in
 
 ---
 
-# Author
-
-**Xiaoyu Jiang**  
-
-PhD Researcher – Consumer Behavior & Neuro‑Decision Science
-
-This tool was originally developed to support vocabulary acquisition during intensive academic reading (especially Zotero‑based literature workflows).
-
----
-
 # Acknowledgement
 
-This project was inspired by the typing interface of **QWERTY‑Learner**, adapted for personal vocabulary learning and research workflows.
+This project was inspired by the typing interface of [QWERTY-Learner](https://github.com/RealKai42/qwerty-learner), adapted for personal vocabulary learning and research workflows.
 
 ---
 
