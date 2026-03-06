@@ -1,0 +1,46 @@
+name: Build and Release macOS App
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build unsigned macOS app
+        run: |
+          xcodebuild \
+            -project SpellingTrainer.xcodeproj \
+            -scheme SpellingTrainer \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            clean build \
+            -derivedDataPath build
+
+      - name: Locate .app
+        run: |
+          APP_PATH=$(find build/Build/Products/Release -maxdepth 1 -name "*.app" | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "No .app found"
+            exit 1
+          fi
+          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
+          echo "APP_NAME=$(basename "$APP_PATH")" >> $GITHUB_ENV
+
+      - name: Zip app
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "${APP_NAME}.zip"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.APP_NAME }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
