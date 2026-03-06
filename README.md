@@ -1,9 +1,12 @@
+![image-20260306113751870](./assets/image-20260306113751870.png)
+
 # Spelling Trainer
 
 A lightweight macOS vocabulary training tool designed for **academic reading workflows**. It allows you to quickly import unfamiliar words (especially from Zotero PDF highlights) and practice spelling using a QWERTY‑Learner–style typing interface.
 
 This project is intentionally implemented as a **single‑file SwiftUI MVP**, making it easy to understand, modify, and extend.
 
+[中文](./doc/中文.md)
 
 ## Recommended Workflow
 
