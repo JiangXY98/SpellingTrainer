@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		B8F405D32F599B8B009B9C9D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = B8F405D02F599B8B009B9C9D /* README.md */; };
-		B8F405D72F5A78AD009B9C9D /* .gitignore in Sources */ = {isa = PBXBuildFile; fileRef = B8F405D52F5A78A1009B9C9D /* .gitignore */; };
-		B8F405D92F5A7BF2009B9C9D /* LICENSE in Sources */ = {isa = PBXBuildFile; fileRef = B8F405D82F5A7BEE009B9C9D /* LICENSE */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +21,11 @@
 		B8DE778E2F596D1500D96689 /* SpellingTrainer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = SpellingTrainer;
+			sourceTree = "<group>";
+		};
+		B8F405DA2F5A7DF7009B9C9D /* doc */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = doc;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -44,6 +47,7 @@
 				B8DE778E2F596D1500D96689 /* SpellingTrainer */,
 				B8DE778D2F596D1500D96689 /* Products */,
 				B8F405D02F599B8B009B9C9D /* README.md */,
+				B8F405DA2F5A7DF7009B9C9D /* doc */,
 				B8F405D52F5A78A1009B9C9D /* .gitignore */,
 				B8F405D82F5A7BEE009B9C9D /* LICENSE */,
 			);
@@ -74,6 +78,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				B8DE778E2F596D1500D96689 /* SpellingTrainer */,
+				B8F405DA2F5A7DF7009B9C9D /* doc */,
 			);
 			name = SpellingTrainer;
 			packageProductDependencies = (
@@ -132,8 +137,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B8F405D92F5A7BF2009B9C9D /* LICENSE in Sources */,
-				B8F405D72F5A78AD009B9C9D /* .gitignore in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

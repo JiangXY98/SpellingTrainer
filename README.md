@@ -412,20 +412,6 @@ Instead of using CoreData or complex architectures, everything is implemented in
 
 ---
 
-# Potential Future Improvements
-
-Possible upgrades:
-
-• full SM‑2 spaced repetition
-• tag‑based practice sets
-• mistake‑focused sessions
-• statistics dashboard
-• keyboard shortcuts
-• better Zotero parsing
-• optional cloud backup providers
-
----
-
 # License
 
 This project is currently released under the **MIT License**.
@@ -489,5 +475,3 @@ This project was inspired by the typing interface of **QWERTY‑Learner**, adapt
 ---
 
 If you find this tool useful, feel free to fork the repository and adapt it to your own workflow.
-
-```

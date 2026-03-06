@@ -1,7 +1,5 @@
 # Spelling Trainer Wiki
 
-本页从 `README.md` 抽取并整理了使用层面的核心信息，便于快速查阅。
-
 ## 项目简介
 
 Spelling Trainer 是一个轻量级 macOS 词汇训练工具，面向学术阅读场景（尤其是 Zotero PDF 高亮导词流程），采用类 QWERTY-Learner 的拼写输入练习方式。
