@@ -108,7 +108,7 @@ final class VocabStore: ObservableObject {
         load()
     }
 
-    static func normalize(_ s: String) -> String {
+    nonisolated static func normalize(_ s: String) -> String {
         s.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 
