@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		B8DE778C2F596D1500D96689 /* ZoteroSpellingTrainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZoteroSpellingTrainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B8DE778C2F596D1500D96689 /* SpellingTrainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpellingTrainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B8DE778E2F596D1500D96689 /* ZoteroSpellingTrainer */ = {
+		B8DE778E2F596D1500D96689 /* SpellingTrainer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ZoteroSpellingTrainer;
+			path = SpellingTrainer;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,7 @@
 		B8DE77832F596D1500D96689 = {
 			isa = PBXGroup;
 			children = (
-				B8DE778E2F596D1500D96689 /* ZoteroSpellingTrainer */,
+				B8DE778E2F596D1500D96689 /* SpellingTrainer */,
 				B8DE778D2F596D1500D96689 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -40,7 +40,7 @@
 		B8DE778D2F596D1500D96689 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B8DE778C2F596D1500D96689 /* ZoteroSpellingTrainer.app */,
+				B8DE778C2F596D1500D96689 /* SpellingTrainer.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B8DE778B2F596D1500D96689 /* ZoteroSpellingTrainer */ = {
+		B8DE778B2F596D1500D96689 /* SpellingTrainer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B8DE77972F596D1500D96689 /* Build configuration list for PBXNativeTarget "ZoteroSpellingTrainer" */;
+			buildConfigurationList = B8DE77972F596D1500D96689 /* Build configuration list for PBXNativeTarget "SpellingTrainer" */;
 			buildPhases = (
 				B8DE77882F596D1500D96689 /* Sources */,
 				B8DE77892F596D1500D96689 /* Frameworks */,
@@ -61,13 +61,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B8DE778E2F596D1500D96689 /* ZoteroSpellingTrainer */,
+				B8DE778E2F596D1500D96689 /* SpellingTrainer */,
 			);
-			name = ZoteroSpellingTrainer;
+			name = SpellingTrainer;
 			packageProductDependencies = (
 			);
 			productName = ZoteroSpellingTrainer;
-			productReference = B8DE778C2F596D1500D96689 /* ZoteroSpellingTrainer.app */;
+			productReference = B8DE778C2F596D1500D96689 /* SpellingTrainer.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -85,7 +85,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B8DE77872F596D1500D96689 /* Build configuration list for PBXProject "ZoteroSpellingTrainer" */;
+			buildConfigurationList = B8DE77872F596D1500D96689 /* Build configuration list for PBXProject "SpellingTrainer" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -99,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B8DE778B2F596D1500D96689 /* ZoteroSpellingTrainer */,
+				B8DE778B2F596D1500D96689 /* SpellingTrainer */,
 			);
 		};
 /* End PBXProject section */
@@ -246,14 +246,28 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9XS64RV854;
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_FILE_ACCESS_DOWNLOADS_FOLDER = readwrite;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Spelling Trainer";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -269,18 +283,19 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.xiaoyu.ZoteroSpellingTrainer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xiaoyujiang.spellingtrainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 26.2;
 			};
 			name = Debug;
@@ -290,14 +305,28 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9XS64RV854;
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_FILE_ACCESS_DOWNLOADS_FOLDER = readwrite;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Spelling Trainer";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -313,18 +342,19 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.xiaoyu.ZoteroSpellingTrainer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xiaoyujiang.spellingtrainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 26.2;
 			};
 			name = Release;
@@ -332,7 +362,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B8DE77872F596D1500D96689 /* Build configuration list for PBXProject "ZoteroSpellingTrainer" */ = {
+		B8DE77872F596D1500D96689 /* Build configuration list for PBXProject "SpellingTrainer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B8DE77952F596D1500D96689 /* Debug */,
@@ -341,7 +371,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B8DE77972F596D1500D96689 /* Build configuration list for PBXNativeTarget "ZoteroSpellingTrainer" */ = {
+		B8DE77972F596D1500D96689 /* Build configuration list for PBXNativeTarget "SpellingTrainer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B8DE77982F596D1500D96689 /* Debug */,
