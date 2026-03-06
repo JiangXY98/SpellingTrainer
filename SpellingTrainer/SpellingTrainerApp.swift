@@ -1,6 +1,6 @@
 //
 //  SpellingTrainerApp.swift
-//  SpellingTrainer
+//  Spelling Trainer
 //
 //  macOS SwiftUI MVP: CSV import + QWERTY-style spelling practice (must retype whole word if wrong)
 //
