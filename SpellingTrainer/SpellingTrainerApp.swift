@@ -36,6 +36,7 @@ struct SpellingTrainerApp: App {
                 .frame(minWidth: 920, minHeight: 620)
         }
         .windowStyle(.titleBar)
+        .windowToolbarStyle(.unified)
 
         Settings {
             SettingsView(store: store)
@@ -1026,6 +1027,7 @@ struct RootView: View {
         } detail: {
             PracticeView(store: store, engine: engine, columnVisibility: $columnVisibility)
         }
+        .navigationSplitViewStyle(.balanced)
     }
 }
 
