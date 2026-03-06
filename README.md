@@ -4,6 +4,18 @@ A lightweight macOS vocabulary training tool designed for **academic reading wor
 
 This project is intentionally implemented as a **single‑file SwiftUI MVP**, making it easy to understand, modify, and extend.
 
+
+## Recommended Workflow
+
+Typical usage with Zotero:
+
+```
+1. Highlight word in Zotero PDF
+2. Copy highlight
+3. Click "Paste Zotero"
+4. Click "Start Practice"
+```
+
 ---
 
 # Core Features
@@ -355,6 +367,19 @@ Default values:
 
 # Building the App
 
+If you clone this project from GitHub, the typical repository structure will look like:
+
+```
+SpellingTrainer
+├── SpellingTrainer
+    └── SpellingTrainerApp.swift
+    │
+    ├── Assets.xcassets
+    ├── README.md
+    ├── LICENSE
+    └── .gitignore
+```
+
 Requirements:
 
 ```
@@ -385,19 +410,6 @@ You can move it to:
 
 ---
 
-# Recommended Workflow
-
-Typical usage with Zotero:
-
-```
-1. Highlight word in Zotero PDF
-2. Copy highlight
-3. Click "Paste Zotero"
-4. Click "Start Practice"
-```
-
----
-
 # Current Design Philosophy
 
 This project intentionally prioritizes:
@@ -409,52 +421,6 @@ low complexity
 ```
 
 Instead of using CoreData or complex architectures, everything is implemented in **one Swift file**, allowing rapid iteration.
-
----
-
-# License
-
-This project is currently released under the **MIT License**.
-
-The MIT license allows anyone to:
-
-• use the software
-• modify the source code
-• redistribute the project
-• incorporate it into other projects
-
-while preserving attribution to the original author.
-
-You can find the full license text in the `LICENSE` file in this repository.
-
----
-
-# GitHub Repository
-
-If you clone this project from GitHub, the typical repository structure will look like:
-
-```
-SpellingTrainer
-├── SpellingTrainer
-    └── SpellingTrainerApp.swift
-    │
-    ├── Assets.xcassets
-    ├── README.md
-    ├── LICENSE
-    └── .gitignore
-```
-
-Recommended `.gitignore` entries:
-
-```
-DerivedData/
-build/
-*.xcuserstate
-*.xcworkspace
-vocab.json
-```
-
-The `vocab.json` file stores personal vocabulary data and should **not be committed to version control**.
 
 ---
 
@@ -475,3 +441,20 @@ This project was inspired by the typing interface of **QWERTY‑Learner**, adapt
 ---
 
 If you find this tool useful, feel free to fork the repository and adapt it to your own workflow.
+
+---
+
+# License
+
+This project is currently released under the **MIT License**.
+
+The MIT license allows anyone to:
+
+• use the software
+• modify the source code
+• redistribute the project
+• incorporate it into other projects
+
+while preserving attribution to the original author.
+
+You can find the full license text in the `LICENSE` file in this repository.
