@@ -41,6 +41,8 @@ struct SpellingTrainerApp: App {
         Settings {
             SettingsView(store: store)
         }
+        .defaultSize(width: 300, height: 360)
+        .windowResizability(.contentSize)
     }
 }
 
@@ -71,6 +73,25 @@ struct VocabItem: Identifiable, Codable, Hashable {
     }
 }
 
+enum StorageLocation: String, CaseIterable, Identifiable {
+    case appSupport
+    case documents
+    case iCloud
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .appSupport:
+            return "App Support"
+        case .documents:
+            return "Documents"
+        case .iCloud:
+            return "iCloud"
+        }
+    }
+}
+
 enum PracticeResult {
     case correct
     case wrong(expected: String)
@@ -89,12 +110,16 @@ enum PracticeMode: String, CaseIterable, Identifiable {
 final class VocabStore: ObservableObject {
     @Published var items: [VocabItem] = []
     @Published var lastError: String? = nil
-
-    @Published var useICloudSync: Bool = UserDefaults.standard.bool(forKey: "useICloudSync") {
+    @Published var storageLocationRaw: String = VocabStore.initialStorageLocation().rawValue {
         didSet {
-            UserDefaults.standard.set(useICloudSync, forKey: "useICloudSync")
+            guard let location = StorageLocation(rawValue: storageLocationRaw) else {
+                storageLocationRaw = StorageLocation.appSupport.rawValue
+                return
+            }
+            UserDefaults.standard.set(location.rawValue, forKey: Self.storageLocationKey)
+            UserDefaults.standard.set(location == .iCloud, forKey: "useICloudSync")
             refreshICloudAvailability()
-            migrateVocabularyFileIfNeeded()
+            migrateVocabularyFileIfNeeded(from: oldValue, to: location.rawValue)
             load()
         }
     }
@@ -102,6 +127,7 @@ final class VocabStore: ObservableObject {
     @Published var iCloudAvailable: Bool = false
 
     private let fileName = "vocab.json"
+    private static let storageLocationKey = "storageLocation"
 
     init() {
         refreshICloudAvailability()
@@ -113,11 +139,34 @@ final class VocabStore: ObservableObject {
         s.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 
+    private static func initialStorageLocation() -> StorageLocation {
+        if let raw = UserDefaults.standard.string(forKey: storageLocationKey),
+           let location = StorageLocation(rawValue: raw) {
+            return location
+        }
+        return UserDefaults.standard.bool(forKey: "useICloudSync") ? .iCloud : .appSupport
+    }
+
+    var storageLocation: StorageLocation {
+        get { StorageLocation(rawValue: storageLocationRaw) ?? .appSupport }
+        set { storageLocationRaw = newValue.rawValue }
+    }
+
     // MARK: Disk IO
 
     private func appSupportURL() -> URL {
         let fm = FileManager.default
         let base = try! fm.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let dir = base.appendingPathComponent("SpellingTrainer", isDirectory: true)
+        if !fm.fileExists(atPath: dir.path) {
+            try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
+        }
+        return dir
+    }
+
+    private func documentsURL() -> URL {
+        let fm = FileManager.default
+        let base = fm.homeDirectoryForCurrentUser.appendingPathComponent("Documents", isDirectory: true)
         let dir = base.appendingPathComponent("SpellingTrainer", isDirectory: true)
         if !fm.fileExists(atPath: dir.path) {
             try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
@@ -143,33 +192,55 @@ final class VocabStore: ObservableObject {
         appSupportURL().appendingPathComponent(fileName)
     }
 
+    private func documentsVocabFileURL() -> URL {
+        documentsURL().appendingPathComponent(fileName)
+    }
+
     private func iCloudVocabFileURL() -> URL? {
         iCloudBaseURL()?.appendingPathComponent(fileName)
     }
 
-    private func activeVocabFileURL() -> URL {
-        refreshICloudAvailability()
-        if useICloudSync, let url = iCloudVocabFileURL() {
-            return url
+    private func resolvedVocabFileURL(location: StorageLocation, iCloudAvailable: Bool) -> URL {
+        switch location {
+        case .appSupport:
+            return localVocabFileURL()
+        case .documents:
+            return documentsVocabFileURL()
+        case .iCloud:
+            if iCloudAvailable, let url = iCloudVocabFileURL() {
+                return url
+            }
+            return localVocabFileURL()
         }
-        return localVocabFileURL()
     }
 
-    private func migrateVocabularyFileIfNeeded() {
-        let fm = FileManager.default
-        let local = localVocabFileURL()
-        let cloud = iCloudVocabFileURL()
+    private func activeVocabFileURL() -> URL {
+        refreshICloudAvailability()
+        return resolvedVocabFileURL(location: storageLocation, iCloudAvailable: iCloudAvailable)
+    }
 
-        if useICloudSync {
-            guard let cloud else { return }
-            if !fm.fileExists(atPath: cloud.path), fm.fileExists(atPath: local.path) {
-                try? fm.copyItem(at: local, to: cloud)
-            }
-        } else {
-            guard let cloud else { return }
-            if !fm.fileExists(atPath: local.path), fm.fileExists(atPath: cloud.path) {
-                try? fm.copyItem(at: cloud, to: local)
-            }
+    private func migrateVocabularyFileIfNeeded(from oldRawValue: String? = nil, to newRawValue: String? = nil) {
+        let fm = FileManager.default
+        let previous = StorageLocation(rawValue: oldRawValue ?? storageLocationRaw) ?? storageLocation
+        let current = StorageLocation(rawValue: newRawValue ?? storageLocationRaw) ?? storageLocation
+        let source = resolvedVocabFileURL(location: previous, iCloudAvailable: iCloudAvailable)
+        let destination = resolvedVocabFileURL(location: current, iCloudAvailable: iCloudAvailable)
+
+        guard source != destination else { return }
+        guard fm.fileExists(atPath: source.path) else { return }
+        guard !fm.fileExists(atPath: destination.path) else { return }
+
+        try? fm.copyItem(at: source, to: destination)
+    }
+
+    var storageStatusText: String {
+        switch storageLocation {
+        case .appSupport:
+            return "Status: App Support"
+        case .documents:
+            return "Status: Documents"
+        case .iCloud:
+            return iCloudAvailable ? "Status: iCloud Available" : "Status: iCloud Unavailable"
         }
     }
 
@@ -178,7 +249,7 @@ final class VocabStore: ObservableObject {
     }
 
     var currentVocabFilePath: String {
-        activeVocabFileURL().path
+        resolvedVocabFileURL(location: storageLocation, iCloudAvailable: iCloudAvailable).path
     }
 
     func save() {
@@ -195,7 +266,7 @@ final class VocabStore: ObservableObject {
         do {
             refreshICloudAvailability()
 
-            if useICloudSync, !iCloudAvailable {
+            if storageLocation == .iCloud, !iCloudAvailable {
                 lastError = "iCloud Drive is unavailable. Using local storage."
             }
 
@@ -827,82 +898,109 @@ struct SettingsView: View {
     @AppStorage("maxReviewPerSession") private var maxReviewPerSession: Int = 30
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            GroupBox("Session Limits") {
-                VStack(alignment: .leading, spacing: 12) {
-                    LabeledContent("Max new per session") {
-                        Stepper(value: $maxNewPerSession, in: 0...200, step: 1) {
-                            Text("\(maxNewPerSession)")
-                                .monospacedDigit()
-                                .frame(minWidth: 40, alignment: .trailing)
-                        }
-                    }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                GroupBox("Session Limits") {
+                    VStack(alignment: .leading, spacing: 12) {
+                        compactStepper(
+                            title: "New words",
+                            value: $maxNewPerSession,
+                            range: 0...200
+                        )
 
-                    LabeledContent("Max reviews per session") {
-                        Stepper(value: $maxReviewPerSession, in: 1...500, step: 1) {
-                            Text("\(maxReviewPerSession)")
-                                .monospacedDigit()
-                                .frame(minWidth: 40, alignment: .trailing)
-                        }
-                    }
+                        compactStepper(
+                            title: "Reviews",
+                            value: $maxReviewPerSession,
+                            range: 1...500
+                        )
 
-                    Text("New = words with 0 attempts. Reviews = due words with ≥1 attempt. Queue order: new first, then reviews.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 4)
-            }
-
-            GroupBox("Sync") {
-                VStack(alignment: .leading, spacing: 10) {
-                    Toggle("Use iCloud Drive sync", isOn: $store.useICloudSync)
-
-                    HStack {
-                        Text("Status")
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Text(store.iCloudAvailable ? "Available" : "Unavailable")
-                            .foregroundStyle(.secondary)
-                    }
-
-                    Text("When enabled, vocab.json is stored in the app’s iCloud Documents container. If iCloud is unavailable, the app falls back to local storage.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Current data path")
-                            .foregroundStyle(.secondary)
-                        Text(store.currentVocabFilePath)
+                        Text("New = words with 0 attempts. Reviews = due words with ≥1 attempt. Queue order: new first, then reviews.")
                             .font(.caption)
-                            .textSelection(.enabled)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 4)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 4)
-            }
 
-            GroupBox("Defaults") {
-                HStack {
-                    Button("Reset to defaults") {
-                        maxNewPerSession = 10
-                        maxReviewPerSession = 30
-                        store.useICloudSync = false
+                GroupBox("Sync") {
+                    VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Data path")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            Picker("Data path", selection: $store.storageLocationRaw) {
+                                ForEach(StorageLocation.allCases) { location in
+                                    Text(location.title).tag(location.rawValue)
+                                }
+                            }
+                            .labelsHidden()
+                            .pickerStyle(.menu)
+                        }
+
+                        Text(store.storageStatusText)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+
+                        Text("Choose where vocab.json is stored. Documents is useful for syncing with other devices via your own sync tool.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Current data path")
+                                .foregroundStyle(.secondary)
+                            Text(store.currentVocabFilePath)
+                                .font(.system(.caption, design: .monospaced))
+                                .font(.caption)
+                                .textSelection(.enabled)
+                                .lineLimit(nil)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color(NSColor.controlBackgroundColor))
+                                )
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
-                    Spacer()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 4)
                 }
-                .padding(.vertical, 4)
-            }
 
-            Spacer(minLength: 0)
+                GroupBox("Defaults") {
+                    HStack {
+                        Button("Reset to defaults") {
+                            maxNewPerSession = 10
+                            maxReviewPerSession = 30
+                            store.storageLocation = .appSupport
+                        }
+                        Spacer()
+                    }
+                    .padding(.vertical, 4)
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
         }
-        .padding(16)
-        .frame(width: 540, height: 330)
-        .onAppear {
-            store.load()
+        .frame(minWidth: 280, maxWidth: 300, minHeight: 360)
+    }
+
+    private func compactStepper(title: String, value: Binding<Int>, range: ClosedRange<Int>) -> some View {
+        HStack(spacing: 8) {
+            Text(title)
+                .font(.caption)
+            Stepper("", value: value, in: range)
+                .labelsHidden()
+
+            Text("\(value.wrappedValue)")
+                .font(.caption)
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+                .frame(minWidth: 28, alignment: .trailing)
         }
     }
 }
