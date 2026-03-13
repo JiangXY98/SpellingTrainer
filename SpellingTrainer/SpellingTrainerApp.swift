@@ -271,8 +271,9 @@ final class VocabStore: ObservableObject {
     }
 
     private func extractZoteroSource(from snippet: String) -> String {
-        // Try to capture the first bracketed citation like: [Huang and Xu, 2025, p. 1]
-        let pattern = "\\[([^\\]]+)\\]"
+        // Only capture the Markdown link label that points to the Zotero item selection.
+        // This avoids picking phonetic brackets from the quoted dictionary meaning.
+        let pattern = "\\[([^\\]]+)\\]\\(zotero://select/[^)\\s]+\\)"
         if let r = try? NSRegularExpression(pattern: pattern) {
             if let m = r.firstMatch(in: snippet, range: NSRange(snippet.startIndex..., in: snippet)) {
                 if let rr = Range(m.range(at: 1), in: snippet) {
@@ -280,6 +281,17 @@ final class VocabStore: ObservableObject {
                 }
             }
         }
+
+        // Fallback for Zotero snippets that only contain a non-select Zotero link.
+        let fallbackPattern = "\\[([^\\]]+)\\]\\(zotero://[^)\\s]+\\)"
+        if let r = try? NSRegularExpression(pattern: fallbackPattern) {
+            if let m = r.firstMatch(in: snippet, range: NSRange(snippet.startIndex..., in: snippet)) {
+                if let rr = Range(m.range(at: 1), in: snippet) {
+                    return String(snippet[rr]).trimmingCharacters(in: .whitespacesAndNewlines)
+                }
+            }
+        }
+
         return ""
     }
     
