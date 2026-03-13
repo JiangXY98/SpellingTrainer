@@ -209,9 +209,17 @@ final class VocabStore: ObservableObject {
 
     // MARK: CRUD
 
-    func upsert(word: String, meaning: String, mergeMeaning: Bool = true) {
+    func upsert(
+        word: String,
+        meaning: String,
+        source: String = "",
+        sourceURL: String = "",
+        mergeMeaning: Bool = true
+    ) {
         let w = word.trimmingCharacters(in: .whitespacesAndNewlines)
         let m = meaning.trimmingCharacters(in: .whitespacesAndNewlines)
+        let s = source.trimmingCharacters(in: .whitespacesAndNewlines)
+        let u = sourceURL.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !w.isEmpty else { return }
 
         let key = Self.normalize(w)
@@ -228,12 +236,30 @@ final class VocabStore: ObservableObject {
             } else {
                 items[idx].meaning = m
             }
+
+            if mergeMeaning {
+                let existingSource = items[idx].source.trimmingCharacters(in: .whitespacesAndNewlines)
+                if existingSource.isEmpty {
+                    items[idx].source = s
+                } else if !s.isEmpty, !existingSource.contains(s) {
+                    items[idx].source = existingSource + "；" + s
+                }
+
+                if items[idx].sourceURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    items[idx].sourceURL = u
+                }
+            } else {
+                items[idx].source = s
+                items[idx].sourceURL = u
+            }
         } else {
             var it = VocabItem(word: w, meaning: m)
             // New items should be due immediately
             it.nextReviewAt = nil
             it.intervalDays = 1
             it.difficulty = 3
+            it.source = s
+            it.sourceURL = u
             items.append(it)
         }
         items.sort { $0.word.lowercased() < $1.word.lowercased() }
@@ -466,15 +492,13 @@ final class VocabStore: ObservableObject {
                         let src = extractZoteroSource(from: snippet)
                         let zotURL = extractZoteroURL(from: snippet)
 
-                        upsert(word: word, meaning: meaning, mergeMeaning: mergeMeaning)
-
-                        if !src.isEmpty || !zotURL.isEmpty {
-                            let key = Self.normalize(word)
-                            if let idx = items.firstIndex(where: { Self.normalize($0.word) == key }) {
-                                if !src.isEmpty, items[idx].source.isEmpty { items[idx].source = src }
-                                if !zotURL.isEmpty, items[idx].sourceURL.isEmpty { items[idx].sourceURL = zotURL }
-                            }
-                        }
+                        upsert(
+                            word: word,
+                            meaning: meaning,
+                            source: src,
+                            sourceURL: zotURL,
+                            mergeMeaning: mergeMeaning
+                        )
 
                         count += 1
                     }
@@ -499,15 +523,13 @@ final class VocabStore: ObservableObject {
                         let src = extractZoteroSource(from: snippet)
                         let zotURL = extractZoteroURL(from: snippet)
 
-                        upsert(word: word, meaning: meaning, mergeMeaning: mergeMeaning)
-
-                        if !src.isEmpty || !zotURL.isEmpty {
-                            let key = Self.normalize(word)
-                            if let idx = items.firstIndex(where: { Self.normalize($0.word) == key }) {
-                                if !src.isEmpty, items[idx].source.isEmpty { items[idx].source = src }
-                                if !zotURL.isEmpty, items[idx].sourceURL.isEmpty { items[idx].sourceURL = zotURL }
-                            }
-                        }
+                        upsert(
+                            word: word,
+                            meaning: meaning,
+                            source: src,
+                            sourceURL: zotURL,
+                            mergeMeaning: mergeMeaning
+                        )
 
                         count += 1
                     }
