@@ -177,6 +177,10 @@ final class VocabStore: ObservableObject {
         activeVocabFileURL()
     }
 
+    var currentVocabFilePath: String {
+        activeVocabFileURL().path
+    }
+
     func save() {
         do {
             refreshICloudAvailability()
@@ -867,6 +871,15 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Current data path")
+                            .foregroundStyle(.secondary)
+                        Text(store.currentVocabFilePath)
+                            .font(.caption)
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 4)
